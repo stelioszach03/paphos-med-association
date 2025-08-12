@@ -1,5 +1,6 @@
 import { supabaseServer } from '@/lib/supabaseServer'
 import { getDictionary } from '@/lib/i18n'
+import Hero from '@/components/hero'
 
 export default async function Home({ params }:{ params:{ locale: string } }){
   const t = await getDictionary(params.locale)
@@ -12,16 +13,7 @@ export default async function Home({ params }:{ params:{ locale: string } }){
 
   return (
     <div>
-      <section className="bg-slate-50 border-b border-slate-200">
-        <div className="container py-16">
-          <h1 className="text-4xl font-extrabold tracking-tight">{t.hero.title}</h1>
-          <p className="text-slate-600 mt-3 max-w-2xl">{t.hero.subtitle}</p>
-          <div className="mt-6 flex gap-3">
-            <a href={`/${params.locale}/join`} className="btn">{t.cta.join}</a>
-            <a href={`/${params.locale}/events`} className="px-3 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50">{t.cta.events}</a>
-          </div>
-        </div>
-      </section>
+      <Hero t={t} locale={params.locale} />
 
       <section className="container py-10">
         <h2 className="text-xl font-bold mb-3">{t.sections.announcements}</h2>
