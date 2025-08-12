@@ -1,5 +1,6 @@
 'use client'
 import { Auth } from '@supabase/auth-ui-react'
+// @ts-ignore - types not published
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { supabaseBrowser } from '@/lib/supabaseClient'
 import { useEffect, useMemo, useRef } from 'react'

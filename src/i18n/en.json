@@ -8,7 +8,9 @@
     "announcements": "Announcements",
     "events": "Events",
     "join": "Join",
-    "login": "Login"
+    "login": "Login",
+    "admin": "Admin",
+    "dashboard": "Dashboard"
   },
   "hero": {
     "title": "Healthcare with trust, transparency and innovation.",
