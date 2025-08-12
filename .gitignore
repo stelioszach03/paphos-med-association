@@ -39,3 +39,4 @@ Thumbs.db
 *.lockb
 *.map
 *.min.*
+tsconfig.tsbuildinfo

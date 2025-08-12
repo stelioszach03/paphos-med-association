@@ -1,8 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { locales } from '@/lib/i18n-config'
+import { supabaseBrowser } from '@/lib/supabaseClient'
 
 function segment(pathname: string) {
   const parts = pathname.split('/').filter(Boolean)
@@ -13,6 +14,20 @@ export default function Navbar({ t, locale }: { t: any; locale: string }) {
   const pathname = usePathname()
   const current = segment(pathname || `/${locale}`)
   const [open, setOpen] = useState(false)
+  const [role, setRole] = useState<'guest' | 'doctor' | 'admin' | 'super_admin'>('guest')
+
+  useEffect(() => {
+    const supabase = supabaseBrowser()
+    supabase.auth.getUser().then(async ({ data }) => {
+      const user = data.user
+      if (!user) return
+      const { data: admin } = await supabase.from('admin_users').select('role').eq('user_id', user.id).maybeSingle()
+      if (admin?.role) { setRole(admin.role as any); return }
+      const { data: doctor } = await supabase.from('doctors').select('status').eq('id', user.id).maybeSingle()
+      if (doctor?.status === 'approved') setRole('doctor')
+    })
+  }, [])
+
   const nav = [
     { href: `/${locale}`, label: t.nav.home, key: '' },
     { href: `/${locale}/articles`, label: t.nav.articles, key: 'articles' },
@@ -20,6 +35,8 @@ export default function Navbar({ t, locale }: { t: any; locale: string }) {
     { href: `/${locale}/events`, label: t.nav.events, key: 'events' },
     { href: `/${locale}/join`, label: t.nav.join, key: 'join' },
   ]
+  if (role === 'doctor') nav.push({ href: `/${locale}/dashboard`, label: t.nav.dashboard, key: 'dashboard' })
+  if (role === 'admin' || role === 'super_admin') nav.push({ href: `/${locale}/admin`, label: t.nav.admin, key: 'admin' })
   return (
     <nav className="navbar sticky top-0 z-40 sticky-blur">
       <div className="container flex items-center justify-between h-16">
