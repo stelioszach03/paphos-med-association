@@ -25,5 +25,10 @@
   },
   "empty": {
     "none": "No content yet."
+  },
+  "footer": {
+    "quick": "Quick links",
+    "contact": "Contact",
+    "email": "Email"
   }
 }

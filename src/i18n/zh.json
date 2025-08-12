@@ -25,5 +25,10 @@
   },
   "empty": {
     "none": "暂无内容。"
+  },
+  "footer": {
+    "quick": "快捷链接",
+    "contact": "联系",
+    "email": "电子邮件"
   }
 }

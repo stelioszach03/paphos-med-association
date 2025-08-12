@@ -7,9 +7,8 @@ export const supabaseServer = () => {
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Missing Supabase env vars')
   }
-  return createServerComponentClient({
-    cookies,
-    supabaseUrl,
-    supabaseKey,
-  })
+  return createServerComponentClient(
+    { cookies },
+    { supabaseUrl, supabaseKey }
+  )
 }
