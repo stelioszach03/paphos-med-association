@@ -1,0 +1,29 @@
+{
+  "site": {
+    "title": "帕福斯医师协会"
+  },
+  "nav": {
+    "home": "首页",
+    "articles": "文章",
+    "announcements": "公告",
+    "events": "活动",
+    "join": "加入",
+    "login": "登录"
+  },
+  "hero": {
+    "title": "以信任、透明与创新推动医疗。",
+    "subtitle": "我们连接帕福斯的医生，服务公众，支持会员。"
+  },
+  "cta": {
+    "join": "成为会员",
+    "events": "活动"
+  },
+  "sections": {
+    "announcements": "公告",
+    "articles": "文章",
+    "events": "活动"
+  },
+  "empty": {
+    "none": "暂无内容。"
+  }
+}

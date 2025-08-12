@@ -1,0 +1,45 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens */
+:root{
+  --primary: #0ea5e9;
+  --bg: #ffffff;
+  --text: #0f172a;
+}
+html, body{ height:100%; }
+body{
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Utility aliases to avoid Tailwind config edits */
+.text-primary{ color: var(--primary); }
+.bg-primary{ background-color: var(--primary); }
+.border-primary{ border-color: var(--primary); }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:2.5rem; padding:0 1rem; border-radius:9999px;
+  background:var(--primary); color:white; font-weight:600;
+}
+.btn:disabled{ opacity:.6; cursor:not-allowed; }
+.card{ border:1px solid #e2e8f0; border-radius:1rem; background:white; }
+.card-header{ padding:1rem 1.25rem; border-bottom:1px solid #e2e8f0; }
+.card-content{ padding:1rem 1.25rem; }
+.input{
+  width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.625rem .875rem; outline:none;
+}
+.input:focus{ border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,165,233,.15); }
+.textarea{
+  width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.625rem .875rem; outline:none; min-height:7rem;
+}
+.badge{
+  display:inline-flex; align-items:center; gap:.35rem;
+  border-radius:9999px; padding:.125rem .5rem; font-size:.75rem;
+  background:#f1f5f9; color:#0f172a; border:1px solid #e2e8f0;
+}
+.container{ max-width:1100px; margin:0 auto; padding:0 1rem; }
+.prose{ line-height:1.7; }
+.sticky-blur{ backdrop-filter: saturate(120%) blur(6px); background: rgba(255,255,255,.85); }

@@ -1,0 +1,29 @@
+{
+  "site": {
+    "title": "Paphos Medical Association"
+  },
+  "nav": {
+    "home": "Home",
+    "articles": "Articles",
+    "announcements": "Announcements",
+    "events": "Events",
+    "join": "Join",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "Healthcare with trust, transparency and innovation.",
+    "subtitle": "We connect Paphos physicians, inform the public and support our members."
+  },
+  "cta": {
+    "join": "Become a member",
+    "events": "Events"
+  },
+  "sections": {
+    "announcements": "Announcements",
+    "articles": "Articles",
+    "events": "Events"
+  },
+  "empty": {
+    "none": "No content yet."
+  }
+}
