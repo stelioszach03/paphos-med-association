@@ -1,4 +1,6 @@
 import { supabaseServer } from '@/lib/supabaseServer'
+import { Card, CardContent } from '@/components/ui/card'
+import Button from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,14 +36,18 @@ export default async function AdminApplications() {
       <h1 className="text-xl font-semibold">Applications</h1>
       <ul className="space-y-4">
         {apps?.map((a: any) => (
-          <li key={a.id} className="border p-4 rounded">
-            <p className="font-medium">{a.full_name}</p>
-            <p className="text-sm">{a.email}</p>
-            <form action={process} className="mt-2 flex gap-2">
-              <input type="hidden" name="id" value={a.id} />
-              <button name="action" value="approve" className="btn">Approve</button>
-              <button name="action" value="reject" className="btn" formNoValidate>Reject</button>
-            </form>
+          <li key={a.id}>
+            <Card>
+              <CardContent className="p-4">
+                <p className="font-medium">{a.full_name}</p>
+                <p className="text-sm text-muted-foreground">{a.email}</p>
+                <form action={process} className="mt-2 flex gap-2">
+                  <input type="hidden" name="id" value={a.id} />
+                  <Button name="action" value="approve">Approve</Button>
+                  <Button name="action" value="reject" formNoValidate variant="secondary">Reject</Button>
+                </form>
+              </CardContent>
+            </Card>
           </li>
         ))}
       </ul>

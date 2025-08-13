@@ -1,23 +1,27 @@
 import { getDictionary } from '@/lib/i18n'
 import { listAllEvents } from '@/data/events'
+import SectionHeader from '@/components/section-header'
+import EventCard from '@/components/cards/EventCard'
+import Skeleton from '@/components/ui/skeleton'
 
 export default async function EventsPage({ params }: { params: { locale: string } }) {
   const t = await getDictionary(params.locale)
   const data = await listAllEvents(params.locale)
   return (
-    <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-6">{t.nav.events}</h1>
-      <div className="grid md:grid-cols-2 gap-4">
+    <div className="container py-10 space-y-6">
+      <SectionHeader title={t.nav.events} />
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         {data?.map((e: any) => (
-          <a key={e.id} href={`/${params.locale}/events/${e.slug}`} className="card hover:shadow-sm transition">
-            <div className="card-header font-semibold">{e.title}</div>
-            <div className="card-content text-sm text-slate-600">
-              {e.startAt ? new Date(e.startAt).toLocaleString() : ''}
-              {e.location ? ` • ${e.location}` : ''}
-            </div>
-          </a>
+          <EventCard
+            key={e.id}
+            href={`/${params.locale}/events/${e.slug}`}
+            title={e.title}
+            date={e.startAt}
+            location={e.location}
+          />
         ))}
-        {!data?.length && <p className="text-slate-500">{t.empty.none}</p>}
+        {data && data.length === 0 && <p className="text-muted-foreground">{t.empty.none}</p>}
+        {!data && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}
       </div>
     </div>
   )

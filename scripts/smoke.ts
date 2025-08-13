@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 
 const routes = ["/", "/el", "/el/login", "/el/announcements", "/el/articles", "/el/events"];
 const base = "http://localhost:4000";
+const classChecks = ["sticky top-0", "backdrop-blur"];
 
 function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -53,6 +54,15 @@ async function run() {
     }
   }
 
+  if (allGood) {
+    const res = await fetch(base + "/el");
+    const html = await res.text();
+    for (const c of classChecks) {
+      const pass = html.includes(c);
+      console.log(`class:${c} -> ${pass ? "✓" : "✗"}`);
+      if (!pass) allGood = false;
+    }
+  }
   killServer();
   if (!allGood) process.exit(1);
 }
