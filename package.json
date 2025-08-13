@@ -8,26 +8,29 @@
     "start": "next start",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "next lint",
-    "validate": "pnpm typecheck && pnpm lint && pnpm build"
+    "db:gen": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "validate": "pnpm typecheck && pnpm lint --no-error-on-unmatched-pattern && pnpm build",
+    "smoke": "tsx scripts/smoke.ts"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/supabase-js": "^2.45.3",
     "@upstash/redis": "^1.28.3",
-    "googleapis": "^155.0.1",
-    "google-auth-library": "^9.2.0",
-    "imapflow": "^1.0.164",
-    "jsonwebtoken": "^9.0.2",
-    "lru-cache": "^10.2.1",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "google-auth-library": "^9.2.0",
+    "googleapis": "^155.0.1",
+    "imapflow": "^1.0.164",
+    "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^10.2.1",
     "lucide-react": "^0.441.0",
-    "next": "14.2.5",
-    "postcss": "^8.4.41",
-    "passkit-generator": "^3.4.0",
     "mailparser": "^3.7.4",
+    "next": "14.2.5",
+    "passkit-generator": "^3.4.0",
+    "postcss": "^8.4.41",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "^3.4.7",
@@ -35,10 +38,12 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/react": "19.1.9",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
-    "@types/jsonwebtoken": "^9.0.5"
+    "tsx": "^4.20.4"
   },
   "engines": {
     "node": ">=20 <21"
