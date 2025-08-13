@@ -1,4 +1,8 @@
 import { supabaseServer } from '@/lib/supabaseServer'
+import { Card, CardContent } from '@/components/ui/card'
+import Input from '@/components/ui/input'
+import Select from '@/components/ui/select'
+import Button from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,21 +27,25 @@ export default async function AdminAdmins() {
   return (
     <div className="container py-8 space-y-4">
       <h1 className="text-xl font-semibold">Admins</h1>
-      <ul className="list-disc pl-5">
-        {admins?.map((a: any) => <li key={a.user_id}>{a.user_id} – {a.role}</li>)}
-      </ul>
-      <form action={add} className="flex gap-2">
-        <input name="user_id" placeholder="User ID" className="input" />
-        <select name="role" className="input">
-          <option value="admin">admin</option>
-          <option value="super_admin">super_admin</option>
-        </select>
-        <button className="btn">Add</button>
-      </form>
-      <form action={remove} className="flex gap-2">
-        <input name="user_id" placeholder="User ID" className="input" />
-        <button className="btn">Remove</button>
-      </form>
+      <Card>
+        <CardContent className="p-4 space-y-4">
+          <ul className="list-disc pl-5 space-y-1">
+            {admins?.map((a: any) => <li key={a.user_id}>{a.user_id} – {a.role}</li>)}
+          </ul>
+          <form action={add} className="flex flex-wrap gap-2">
+            <Input name="user_id" placeholder="User ID" className="w-full md:w-auto" />
+            <Select name="role" className="w-full md:w-auto">
+              <option value="admin">admin</option>
+              <option value="super_admin">super_admin</option>
+            </Select>
+            <Button>Add</Button>
+          </form>
+          <form action={remove} className="flex flex-wrap gap-2">
+            <Input name="user_id" placeholder="User ID" className="w-full md:w-auto" />
+            <Button>Remove</Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }

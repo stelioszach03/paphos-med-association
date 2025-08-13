@@ -1,13 +1,15 @@
 import Link from 'next/link'
+import { Facebook, Twitter, Instagram } from 'lucide-react'
 
 export default function Footer({ t, locale }: { t: any; locale: string }) {
   return (
-    <footer className="border-t border-muted mt-10">
-      <div className="container py-10 grid md:grid-cols-3 gap-8 text-sm text-muted">
-        <div>
+    <footer className="mt-10 border-t border-muted bg-background">
+      <div className="container py-10 grid md:grid-cols-3 gap-8 text-sm text-muted-foreground">
+        <div className="space-y-2">
           <Link href={`/${locale}`} className="font-semibold text-foreground">
             {t.site.title}
           </Link>
+          <p className="max-w-xs">{t.footer.about}</p>
         </div>
         <div>
           <h3 className="font-semibold mb-2 text-foreground">{t.footer.quick}</h3>
@@ -30,13 +32,18 @@ export default function Footer({ t, locale }: { t: any; locale: string }) {
           </ul>
         </div>
         <div>
-          <h3 className="font-semibold mb-2 text-foreground">{t.footer.contact}</h3>
-          <p>
-            {t.footer.email}:{' '}
-            <a href="mailto:info@paphosma.org" className="hover:text-foreground">
-              info@paphosma.org
+          <h3 className="font-semibold mb-2 text-foreground">{t.footer.social}</h3>
+          <div className="flex gap-4 text-muted-foreground">
+            <a href="#" aria-label="Facebook" className="hover:text-foreground">
+              <Facebook className="h-5 w-5" />
             </a>
-          </p>
+            <a href="#" aria-label="Twitter" className="hover:text-foreground">
+              <Twitter className="h-5 w-5" />
+            </a>
+            <a href="#" aria-label="Instagram" className="hover:text-foreground">
+              <Instagram className="h-5 w-5" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,5 +1,8 @@
 import { supabaseServer } from '@/lib/supabaseServer'
 import { createMeeting } from '@/lib/zoom'
+import { Card, CardContent } from '@/components/ui/card'
+import Input from '@/components/ui/input'
+import Button from '@/components/ui/button'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,15 +32,19 @@ export default async function AdminZoom() {
   return (
     <div className="container py-8 space-y-4">
       <h1 className="text-xl font-semibold">Zoom meetings</h1>
-      <ul className="list-disc pl-5">
-        {meetings?.map((m: any) => <li key={m.id}>{m.topic} – {m.starts_at}</li>)}
-      </ul>
-      <form action={add} className="flex flex-col gap-2 max-w-sm">
-        <input name="topic" placeholder="Topic" className="input" />
-        <input name="starts_at" type="datetime-local" className="input" />
-        <input name="duration" type="number" placeholder="Duration (min)" className="input" />
-        <button className="btn">Create</button>
-      </form>
+      <Card>
+        <CardContent className="p-4 space-y-4">
+          <ul className="list-disc pl-5 space-y-1">
+            {meetings?.map((m: any) => <li key={m.id}>{m.topic} – {m.starts_at}</li>)}
+          </ul>
+          <form action={add} className="flex flex-col gap-2 max-w-sm">
+            <Input name="topic" placeholder="Topic" />
+            <Input name="starts_at" type="datetime-local" />
+            <Input name="duration" type="number" placeholder="Duration (min)" />
+            <Button>Create</Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }

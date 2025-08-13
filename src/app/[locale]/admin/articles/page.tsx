@@ -3,26 +3,45 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { listArticles } from "@/data/admin/articles";
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import Button from '@/components/ui/button'
 
 export default async function Page({ params }: { params: { locale: string } }) {
   const rows = await listArticles();
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <Card>
+      <CardHeader className="flex items-center justify-between">
         <h2 className="text-xl font-medium">Articles</h2>
-        <Link className="btn" href={`/${params.locale}/admin/articles/new`}>New</Link>
-      </div>
-      <ul className="divide-y">
-        {rows.map((r: any) => (
-          <li key={r.id} className="py-3 flex items-center justify-between">
-            <div>
-              <div className="font-semibold">{r.title}</div>
-              <div className="text-xs text-gray-500">{r.slug} • {r.lang}</div>
-            </div>
-            <Link className="text-sm underline" href={`/${params.locale}/admin/articles/${r.slug}`}>Edit</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <Link href={`/${params.locale}/admin/articles/new`}>
+          <Button size="sm">New</Button>
+        </Link>
+      </CardHeader>
+      <CardContent className="p-0">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/40 text-left">
+            <tr>
+              <th className="p-2">Title</th>
+              <th className="p-2">Slug</th>
+              <th className="p-2">Lang</th>
+              <th className="p-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r: any, idx: number) => (
+              <tr key={r.id} className={idx % 2 ? 'odd:bg-muted/10' : ''}>
+                <td className="p-2 font-medium">{r.title}</td>
+                <td className="p-2 text-muted-foreground">{r.slug}</td>
+                <td className="p-2 text-muted-foreground">{r.lang}</td>
+                <td className="p-2 text-right">
+                  <Link className="underline" href={`/${params.locale}/admin/articles/${r.slug}`}>
+                    Edit
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
   );
 }
