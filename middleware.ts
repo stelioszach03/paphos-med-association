@@ -1,9 +1,9 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { LRUCache } from 'lru-cache'
 import { Redis } from '@upstash/redis'
+import { lucia } from '@/lib/auth/lucia'
 
 const middlewareLru = new LRUCache<string, number>({ max: 500, ttl: 60_000 })
 
@@ -37,15 +37,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  const supabase = createMiddlewareClient(
-    { req, res },
-    {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    }
-  )
-  await supabase.auth.getSession()
-
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -60,6 +51,20 @@ export async function middleware(req: NextRequest) {
     url.pathname = `/${defaultLocale}${pathname}`
     url.hash = req.nextUrl.hash
     return NextResponse.redirect(url)
+  }
+
+  // Check auth for admin routes
+  if (pathname.match(/^\/[a-z]{2}\/admin/)) {
+    const sessionId = req.cookies.get(lucia.sessionCookieName)?.value ?? null
+    
+    if (!sessionId) {
+      const url = req.nextUrl.clone()
+      url.pathname = `/${pathLocale}/login`
+      return NextResponse.redirect(url)
+    }
+
+    // Note: We can't validate session in middleware due to Next.js limitations
+    // Session validation will happen in the actual page/route
   }
 
   return res
