@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createApplication } from "@/data/applications";
-import { getSession } from "@/lib/auth/requireAdmin";
+import { validateRequest } from "@/lib/auth/validateRequest";
 
 const applicationSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const validated = applicationSchema.parse(body);
 
     // Get current user session if exists (optional for applications)
-    const { user } = await getSession();
+    const { user } = await validateRequest();
 
     // Create application
     const application = await createApplication({

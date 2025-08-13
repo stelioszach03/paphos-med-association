@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { s3 } from "@/lib/storage/s3";
-import { getSession } from "@/lib/auth/requireAdmin";
+import { validateRequest } from "@/lib/auth/validateRequest";
 import { db } from "@/db/client";
 import { doctors, adminUsers } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -14,9 +14,9 @@ const presignSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const { session, user } = await getSession();
-    
-    if (!session || !user) {
+    const { user } = await validateRequest();
+
+    if (!user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       .from(doctors)
       .where(eq(doctors.id, user.id))
       .limit(1);
-    
+
     const [isAdmin] = await db
       .select()
       .from(adminUsers)
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       3600 // 1 hour
     );
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       uploadUrl: presignedUrl,
       key: finalKey,

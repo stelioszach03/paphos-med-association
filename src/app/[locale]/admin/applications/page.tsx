@@ -1,10 +1,8 @@
-import { requireAdmin } from '@/lib/roles'
 import { supabaseServer } from '@/lib/supabaseServer'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminApplications() {
-  await requireAdmin()
   const supabase = supabaseServer()
   const { data: apps } = await supabase.from('applications').select('*').order('created_at', { ascending: false })
 
@@ -35,7 +33,7 @@ export default async function AdminApplications() {
     <div className="container py-8 space-y-4">
       <h1 className="text-xl font-semibold">Applications</h1>
       <ul className="space-y-4">
-        {apps?.map(a => (
+        {apps?.map((a: any) => (
           <li key={a.id} className="border p-4 rounded">
             <p className="font-medium">{a.full_name}</p>
             <p className="text-sm">{a.email}</p>

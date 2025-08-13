@@ -1,11 +1,9 @@
-import { requireAdmin } from '@/lib/roles'
 import { supabaseServer } from '@/lib/supabaseServer'
 import { createMeeting } from '@/lib/zoom'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminZoom() {
-  await requireAdmin()
   const supabase = supabaseServer()
   const { data: meetings } = await supabase.from('zoom_meetings').select('*').order('starts_at')
 
@@ -32,7 +30,7 @@ export default async function AdminZoom() {
     <div className="container py-8 space-y-4">
       <h1 className="text-xl font-semibold">Zoom meetings</h1>
       <ul className="list-disc pl-5">
-        {meetings?.map(m => <li key={m.id}>{m.topic} – {m.starts_at}</li>)}
+        {meetings?.map((m: any) => <li key={m.id}>{m.topic} – {m.starts_at}</li>)}
       </ul>
       <form action={add} className="flex flex-col gap-2 max-w-sm">
         <input name="topic" placeholder="Topic" className="input" />

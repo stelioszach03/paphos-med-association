@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth/requireAdmin'
+import { validateRequest } from '@/lib/auth/validateRequest'
 import { getDoctorById } from '@/data/doctors'
 import { listLatestAnnouncements } from '@/data/announcements'
 import { getUserMeetings } from '@/data/zoom'
@@ -7,9 +7,9 @@ import { getUserMeetings } from '@/data/zoom'
 export const dynamic = 'force-dynamic'
 
 export default async function Dashboard({ params: { locale } }: { params: { locale: string } }) {
-  const { session, user } = await getSession()
-  if (!session || !user) redirect(`/${locale}/login`)
-  
+  const { user } = await validateRequest()
+  if (!user) redirect(`/${locale}/login`)
+
   const [doctor, announcements, meetings] = await Promise.all([
     getDoctorById(user.id),
     listLatestAnnouncements(locale, 5),
@@ -32,13 +32,13 @@ export default async function Dashboard({ params: { locale } }: { params: { loca
       <section>
         <h2 className="text-xl font-semibold mb-2">Announcements</h2>
         <ul className="list-disc pl-5">
-          {announcements?.map(a => <li key={a.id}>{a.title}</li>)}
+          {announcements?.map((a: any) => <li key={a.id}>{a.title}</li>)}
         </ul>
       </section>
       <section>
         <h2 className="text-xl font-semibold mb-2">Upcoming meetings</h2>
         <ul className="list-disc pl-5">
-          {meetings.map((m) => (
+          {meetings.map((m: any) => (
             <li key={m.id}>
               {m.topic} – <a className="text-primary" href={m.joinUrl || '#'}>Join</a>
             </li>

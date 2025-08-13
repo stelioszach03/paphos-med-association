@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/requireAdmin";
+import { validateRequest } from "@/lib/auth/validateRequest";
 import { db } from "@/db/client";
 import { adminUsers, doctors } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
-    const { session, user } = await getSession();
-    
-    if (!session || !user) {
-      return NextResponse.json({ 
+    const { user } = await validateRequest();
+
+    if (!user) {
+      return NextResponse.json({
         authenticated: false,
         user: null,
         role: 'guest'
