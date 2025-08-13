@@ -1,14 +1,15 @@
-import { supabaseServer } from '@/lib/supabaseServer'
 import { getDictionary } from '@/lib/i18n'
 import Hero from '@/components/hero'
+import { listLatestArticles } from '@/data/articles'
+import { listLatestAnnouncements } from '@/data/announcements'
+import { listUpcomingEvents } from '@/data/events'
 
 export default async function Home({ params }:{ params:{ locale: string } }){
   const t = await getDictionary(params.locale)
-  const supabase = supabaseServer()
-  const [{ data: news }, { data: anns }, { data: evs }] = await Promise.all([
-    supabase.from('articles').select('id,title,slug,summary,created_at').eq('lang', params.locale).order('created_at', { ascending: false }).limit(3),
-    supabase.from('announcements').select('id,title,slug,summary,created_at').eq('lang', params.locale).order('created_at', { ascending: false }).limit(3),
-    supabase.from('events').select('id,title,slug,start_at,end_at,location').eq('lang', params.locale).order('start_at', { ascending: true }).limit(3),
+  const [news, anns, evs] = await Promise.all([
+    listLatestArticles(params.locale, 3),
+    listLatestAnnouncements(params.locale, 3),
+    listUpcomingEvents(params.locale, 3),
   ])
 
   return (
@@ -48,7 +49,7 @@ export default async function Home({ params }:{ params:{ locale: string } }){
             <a key={e.id} href={`/${params.locale}/events/${e.slug}`} className="card hover:shadow-sm transition">
               <div className="card-header font-semibold">{e.title}</div>
               <div className="card-content text-sm text-slate-600">
-                {e.start_at ? new Date(e.start_at).toLocaleString() : ''}
+                {e.startAt ? new Date(e.startAt).toLocaleString() : ''}
                 {e.location ? ` • ${e.location}` : ''}
               </div>
             </a>

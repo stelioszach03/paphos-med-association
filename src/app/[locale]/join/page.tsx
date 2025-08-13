@@ -1,14 +1,12 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Input from '@/components/ui/input'
 import Textarea from '@/components/ui/textarea'
 import Button from '@/components/ui/button'
 import Field from '@/components/ui/field'
 import { isEmail } from '@/components/ui/validators'
-import { supabaseBrowser } from '@/lib/supabaseClient'
 
 export default function JoinPage(){
-  const supabase = useRef(supabaseBrowser()).current
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -28,13 +26,23 @@ export default function JoinPage(){
     setErrors({})
     setSaving(true); setErr(null); setOk(null)
     try{
-      const { data: { user } } = await supabase.auth.getUser()
-      const { error } = await supabase.from('applications').insert({
-        user_id: user?.id || null,
-        full_name: fullName,
-        email, phone, registry_no: registry, notes
+      const response = await fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          registryNo: registry,
+          notes
+        })
       })
-      if (error) throw error
+      
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to submit application')
+      }
+      
       setOk('Η αίτηση υποβλήθηκε επιτυχώς. Θα επικοινωνήσουμε σύντομα.')
       setFullName(''); setEmail(''); setPhone(''); setRegistry(''); setNotes('')
     }catch(e:any){
