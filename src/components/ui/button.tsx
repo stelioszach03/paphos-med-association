@@ -1,13 +1,37 @@
-import type { ButtonHTMLAttributes } from 'react'
+import { ButtonHTMLAttributes } from 'react'
+import clsx from 'clsx'
 
-const variants: Record<'primary'|'outline'|'ghost', string> = {
-  primary: 'btn',
-  outline: 'btn-outline',
-  ghost: 'px-3 py-2 rounded-xl text-slate-700 hover:bg-slate-50'
+const variants = {
+  default: 'bg-primary text-foreground hover:bg-primary/90',
+  secondary: 'bg-muted text-foreground hover:bg-muted/80',
+  outline: 'border border-muted bg-transparent hover:bg-muted',
+  destructive: 'bg-destructive text-foreground hover:bg-destructive/90',
 }
 
-export default function Button(props: ButtonHTMLAttributes<HTMLButtonElement> & {variant?:'primary'|'outline'|'ghost'}){
-  const { className='', variant='primary', ...rest } = props
-  const base = variants[variant]
-  return <button className={base + (className? ' '+className : '')} {...rest} />
+const sizes = {
+  sm: 'h-8 px-3 text-sm',
+  md: 'h-9 px-4 text-sm',
+  lg: 'h-10 px-6 text-base',
+}
+
+export default function Button({
+  className = '',
+  variant = 'default',
+  size = 'md',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: keyof typeof variants
+  size?: keyof typeof sizes
+}) {
+  return (
+    <button
+      className={clsx(
+        'inline-flex items-center justify-center rounded-md font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50 disabled:pointer-events-none transition-colors',
+        variants[variant],
+        sizes[size],
+        className
+      )}
+      {...props}
+    />
+  )
 }
