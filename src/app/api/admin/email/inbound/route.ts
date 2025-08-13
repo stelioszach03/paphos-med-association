@@ -1,4 +1,4 @@
-import { saveEmail } from '@/lib/email'
+import { saveEmail } from '@/lib/email/save'
 
 export async function POST(req: Request) {
   if (process.env.NODE_ENV === 'production') return new Response('Not found', { status: 404 })
