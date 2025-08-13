@@ -3,7 +3,7 @@ import { z } from "zod";
 import { lucia } from "@/lib/auth/lucia";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
-import { verify } from "oslo/password";
+import { Argon2id } from "oslo/password";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 
@@ -41,12 +41,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validPassword = await verify(
+    const argon2id = new Argon2id();
+    const validPassword = await argon2id.verify(
       foundUser.hashedPassword,
-      password,
-      {
-        algorithm: "argon2id",
-      }
+      password
     );
 
     if (!validPassword) {

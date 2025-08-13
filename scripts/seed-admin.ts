@@ -1,6 +1,6 @@
 import { db } from "../src/db/client";
 import { users, adminUsers } from "../src/db/schema";
-import { hash } from "oslo/password";
+import { Argon2id } from "oslo/password";
 import { generateId } from "lucia";
 import { eq } from "drizzle-orm";
 import * as fs from "fs";
@@ -28,10 +28,8 @@ async function seedAdmin() {
       console.log("User already exists, updating password...");
       
       // Update password
-      const hashedPassword = await hash(password, {
-        algorithm: "argon2id",
-        strength: "strong",
-      });
+      const argon2id = new Argon2id();
+      const hashedPassword = await argon2id.hash(password);
       
       await db
         .update(users)
@@ -40,10 +38,8 @@ async function seedAdmin() {
     } else {
       // Create new user
       userId = generateId(15);
-      const hashedPassword = await hash(password, {
-        algorithm: "argon2id",
-        strength: "strong",
-      });
+      const argon2id = new Argon2id();
+      const hashedPassword = await argon2id.hash(password);
 
       await db.insert(users).values({
         id: userId,

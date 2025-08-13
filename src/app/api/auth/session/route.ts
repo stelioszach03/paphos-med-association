@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         user: {
           id: user.id,
           email: user.email,
-          fullName: user.full_name
+          fullName: user.fullName
         },
         role: admin.role
       });
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         user: {
           id: user.id,
           email: user.email,
-          fullName: user.full_name
+          fullName: user.fullName
         },
         role: 'doctor'
       });
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
-        fullName: user.full_name
+        fullName: user.fullName
       },
       role: 'guest'
     });

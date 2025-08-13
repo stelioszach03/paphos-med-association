@@ -3,7 +3,7 @@ import { z } from "zod";
 import { lucia } from "@/lib/auth/lucia";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
-import { hash } from "oslo/password";
+import { Argon2id } from "oslo/password";
 import { generateId } from "lucia";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
@@ -34,10 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = await hash(password, {
-      algorithm: "argon2id",
-      strength: "strong",
-    });
+    const argon2id = new Argon2id();
+    const hashedPassword = await argon2id.hash(password);
 
     // Create user
     const userId = generateId(15);

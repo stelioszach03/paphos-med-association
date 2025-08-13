@@ -40,7 +40,7 @@ export default async function Dashboard({ params: { locale } }: { params: { loca
         <ul className="list-disc pl-5">
           {meetings.map((m) => (
             <li key={m.id}>
-              {m.topic} – <a className="text-primary" href={m.joinUrl}>Join</a>
+              {m.topic} – <a className="text-primary" href={m.joinUrl || '#'}>Join</a>
             </li>
           ))}
         </ul>
