@@ -40,3 +40,6 @@ Thumbs.db
 *.map
 *.min.*
 tsconfig.tsbuildinfo
+
+# Seed output
+.seed-output/
