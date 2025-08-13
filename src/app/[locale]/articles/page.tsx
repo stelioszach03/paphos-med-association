@@ -8,7 +8,7 @@ export default async function ArticlesPage({ params }: { params: { locale: strin
     <div className="container py-10">
       <h1 className="text-3xl font-bold mb-6">{t.nav.articles}</h1>
       <div className="grid md:grid-cols-2 gap-4">
-        {data?.map(a => (
+        {data?.map((a: any) => (
           <a key={a.id} href={`/${params.locale}/articles/${a.slug}`} className="card hover:shadow-sm transition">
             <div className="card-header font-semibold">{a.title}</div>
             <div className="card-content text-sm text-slate-600 line-clamp-3">{a.summary || ''}</div>

@@ -1,73 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
+import "server-only";
+export const runtime = "nodejs";
 import { z } from "zod";
-import { lucia } from "@/lib/auth/lucia";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
-import { Argon2id } from "oslo/password";
-import { generateId } from "lucia";
+import { lucia } from "@/lib/auth/lucia";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
+import { hashPassword } from "@/lib/auth/password";
 
-const signupSchema = z.object({
+const Body = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  fullName: z.string().optional(),
+  fullName: z.string().min(1).optional()
 });
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { email, password, fullName } = signupSchema.parse(body);
+export async function POST(req: Request) {
+  const body = await req.json().catch(() => ({}));
+  const parsed = Body.safeParse(body);
+  if (!parsed.success) return new Response("Invalid", { status: 400 });
+  const { email, password, fullName } = parsed.data;
 
-    // Check if user already exists
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+  // deny duplicate
+  const existing = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+  if (existing.length > 0) return new Response("Email exists", { status: 409 });
 
-    if (existingUser.length > 0) {
-      return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 }
-      );
-    }
+  const id = crypto.randomUUID();
+  const hashed = await hashPassword(password);
+  await db.insert(users).values({ id, email, hashedPassword: hashed, fullName: fullName ?? null });
 
-    // Hash password
-    const argon2id = new Argon2id();
-    const hashedPassword = await argon2id.hash(password);
-
-    // Create user
-    const userId = generateId(15);
-    await db.insert(users).values({
-      id: userId,
-      email,
-      hashedPassword,
-      fullName: fullName || null,
-    });
-
-    // Create session
-    const session = await lucia.createSession(userId, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
-
-    return NextResponse.json({ success: true, userId });
-  } catch (error) {
-    console.error("Signup error:", error);
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid request data", details: error.errors },
-        { status: 400 }
-      );
-    }
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  const session = await lucia.createSession(id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  return new Response(null, { status: 201 });
 }

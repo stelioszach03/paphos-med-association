@@ -1,4 +1,3 @@
-import { requireAdmin } from '@/lib/auth/requireAdmin'
 import { getApplicationStatusCounts } from '@/data/applications'
 import { getDoctorCount } from '@/data/doctors'
 import { getUpcomingMeetingsCount } from '@/data/zoom'
@@ -6,8 +5,6 @@ import { getUpcomingMeetingsCount } from '@/data/zoom'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminHome({ params: { locale } }: { params: { locale: string } }) {
-  await requireAdmin()
-  
   const [counts, doctorCount, meetingCount] = await Promise.all([
     getApplicationStatusCounts(),
     getDoctorCount(),

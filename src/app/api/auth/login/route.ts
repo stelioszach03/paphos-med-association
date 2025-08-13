@@ -1,86 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import "server-only";
+export const runtime = "nodejs";
 import { z } from "zod";
-import { lucia } from "@/lib/auth/lucia";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
-import { Argon2id } from "oslo/password";
+import { lucia } from "@/lib/auth/lucia";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
+import { verifyPassword } from "@/lib/auth/password";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
+const Body = z.object({ email: z.string().email(), password: z.string().min(8) });
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { email, password } = loginSchema.parse(body);
+export async function POST(req: Request) {
+  const body = await req.json().catch(() => ({}));
+  const parsed = Body.safeParse(body);
+  if (!parsed.success) return new Response("Invalid", { status: 400 });
 
-    // Find user
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+  const rows = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, parsed.data.email))
+    .limit(1);
+  const user = rows[0];
+  if (!user || !user.hashedPassword) return new Response("Unauthorized", { status: 401 });
 
-    if (user.length === 0) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
+  const ok = await verifyPassword(user.hashedPassword, parsed.data.password);
+  if (!ok) return new Response("Unauthorized", { status: 401 });
 
-    const [foundUser] = user;
-
-    // Verify password
-    if (!foundUser.hashedPassword) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
-
-    const argon2id = new Argon2id();
-    const validPassword = await argon2id.verify(
-      foundUser.hashedPassword,
-      password
-    );
-
-    if (!validPassword) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
-
-    // Create session
-    const session = await lucia.createSession(foundUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
-
-    return NextResponse.json({ 
-      success: true, 
-      userId: foundUser.id,
-      email: foundUser.email,
-      fullName: foundUser.fullName 
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid request data", details: error.errors },
-        { status: 400 }
-      );
-    }
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  const session = await lucia.createSession(user.id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+  return new Response(null, { status: 200 });
 }

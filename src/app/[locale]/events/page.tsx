@@ -8,7 +8,7 @@ export default async function EventsPage({ params }: { params: { locale: string 
     <div className="container py-10">
       <h1 className="text-3xl font-bold mb-6">{t.nav.events}</h1>
       <div className="grid md:grid-cols-2 gap-4">
-        {data?.map(e => (
+        {data?.map((e: any) => (
           <a key={e.id} href={`/${params.locale}/events/${e.slug}`} className="card hover:shadow-sm transition">
             <div className="card-header font-semibold">{e.title}</div>
             <div className="card-content text-sm text-slate-600">
