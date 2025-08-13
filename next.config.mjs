@@ -3,8 +3,18 @@ const nextConfig = {
   experimental: {
     serverActions: { allowedOrigins: ['*'] }
   },
+  webpack: (config) => {
+    config.externals = config.externals || [];
+    config.externals.push({
+      '@node-rs/argon2': '@node-rs/argon2',
+      '@node-rs/argon2-darwin-arm64': '@node-rs/argon2-darwin-arm64',
+      '@node-rs/bcrypt': '@node-rs/bcrypt',
+      '@node-rs/bcrypt-darwin-arm64': '@node-rs/bcrypt-darwin-arm64'
+    });
+    return config;
+  },
   async headers() {
-    const csp = `default-src 'self'; connect-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL}; img-src 'self' data:; style-src 'self' 'unsafe-inline';`
+    const csp = `default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';`
     return [
       {
         source: '/(.*)',
