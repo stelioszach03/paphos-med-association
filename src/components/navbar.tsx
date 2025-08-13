@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { locales } from '@/lib/i18n-config'
+import ThemeToggle from './theme-toggle'
 
 function segment(pathname: string) {
   const parts = pathname.split('/').filter(Boolean)
@@ -55,6 +56,7 @@ export default function Navbar({ t, locale }: { t: any; locale: string }) {
           <Link href={`/${locale}/login`} className="text-sm text-slate-600 hover:text-slate-900">
             {t.nav.login}
           </Link>
+          <ThemeToggle />
           <select
             className="text-sm border rounded-xl px-2 py-1"
             defaultValue={locale}

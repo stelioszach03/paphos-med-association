@@ -24,6 +24,10 @@ export default async function AdminLayout({ children, params }: { children: Reac
           <Link href={`/${params.locale}/admin/articles`}>Articles</Link>
           <Link href={`/${params.locale}/admin/announcements`}>Announcements</Link>
           <Link href={`/${params.locale}/admin/events`}>Events</Link>
+          <Link href={`/${params.locale}/admin/applications`}>Applications</Link>
+          <Link href={`/${params.locale}/admin/email`}>Email</Link>
+          <Link href={`/${params.locale}/admin/zoom`}>Zoom</Link>
+          <Link href={`/${params.locale}/admin/admins`}>Admins</Link>
         </nav>
       </header>
       {children}
