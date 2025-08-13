@@ -1,15 +1,9 @@
-import { supabaseServer } from '@/lib/supabaseServer'
 import { getDictionary } from '@/lib/i18n'
+import { getArticleBySlug } from '@/data/articles'
 
 export default async function ArticleDetail({ params }: { params: { locale: string; slug: string } }) {
   const t = await getDictionary(params.locale)
-  const supabase = supabaseServer()
-  const { data } = await supabase
-    .from('articles')
-    .select('title,content,created_at')
-    .eq('slug', params.slug)
-    .eq('lang', params.locale)
-    .maybeSingle()
+  const data = await getArticleBySlug(params.slug, params.locale)
   if (!data) return <div className="container py-10">{t.empty.none}</div>
   return (
     <div className="container py-10">

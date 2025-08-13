@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { locales } from '@/lib/i18n-config'
-import { supabaseBrowser } from '@/lib/supabaseClient'
 
 function segment(pathname: string) {
   const parts = pathname.split('/').filter(Boolean)
@@ -17,15 +16,14 @@ export default function Navbar({ t, locale }: { t: any; locale: string }) {
   const [role, setRole] = useState<'guest' | 'doctor' | 'admin' | 'super_admin'>('guest')
 
   useEffect(() => {
-    const supabase = supabaseBrowser()
-    supabase.auth.getUser().then(async ({ data }) => {
-      const user = data.user
-      if (!user) return
-      const { data: admin } = await supabase.from('admin_users').select('role').eq('user_id', user.id).maybeSingle()
-      if (admin?.role) { setRole(admin.role as any); return }
-      const { data: doctor } = await supabase.from('doctors').select('status').eq('id', user.id).maybeSingle()
-      if (doctor?.status === 'approved') setRole('doctor')
-    })
+    fetch('/api/auth/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.role) {
+          setRole(data.role)
+        }
+      })
+      .catch(err => console.error('Failed to fetch session:', err))
   }, [])
 
   const nav = [

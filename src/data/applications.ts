@@ -52,3 +52,14 @@ export async function updateApplicationStatus(id: number, status: string) {
   
   return application;
 }
+
+export async function getApplicationStatusCounts() {
+  const apps = await db.select({ status: applications.status }).from(applications);
+  const counts = { submitted: 0, approved: 0, rejected: 0 };
+  apps.forEach(a => {
+    if (a.status && (a.status in counts)) {
+      counts[a.status as keyof typeof counts]++;
+    }
+  });
+  return counts;
+}

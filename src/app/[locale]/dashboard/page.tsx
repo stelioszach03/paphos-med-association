@@ -1,19 +1,20 @@
 import { redirect } from 'next/navigation'
-import { supabaseServer } from '@/lib/supabaseServer'
+import { getSession } from '@/lib/auth/requireAdmin'
+import { getDoctorById } from '@/data/doctors'
+import { listLatestAnnouncements } from '@/data/announcements'
+import { getUserMeetings } from '@/data/zoom'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Dashboard({ params: { locale } }: { params: { locale: string } }) {
-  const supabase = supabaseServer()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect(`/${locale}/login`)
-  const { data: doctor } = await supabase.from('doctors').select('*').eq('id', user.id).maybeSingle()
-  const { data: announcements } = await supabase.from('announcements').select('id,title,slug').order('created_at', { ascending: false }).limit(5)
-  const { data: meetingsRaw } = await supabase
-    .from('zoom_attendees')
-    .select('zoom_meetings(id,topic,join_url,starts_at)')
-    .eq('user_id', user.id)
-  const meetings = (meetingsRaw as any[]) || []
+  const { session, user } = await getSession()
+  if (!session || !user) redirect(`/${locale}/login`)
+  
+  const [doctor, announcements, meetings] = await Promise.all([
+    getDoctorById(user.id),
+    listLatestAnnouncements(locale, 5),
+    getUserMeetings(user.id)
+  ])
   return (
     <div className="container py-8 space-y-6">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
@@ -37,9 +38,9 @@ export default async function Dashboard({ params: { locale } }: { params: { loca
       <section>
         <h2 className="text-xl font-semibold mb-2">Upcoming meetings</h2>
         <ul className="list-disc pl-5">
-          {meetings.map((m: any) => (
-            <li key={m.zoom_meetings.id}>
-              {m.zoom_meetings.topic} – <a className="text-primary" href={m.zoom_meetings.join_url}>Join</a>
+          {meetings.map((m) => (
+            <li key={m.id}>
+              {m.topic} – <a className="text-primary" href={m.joinUrl}>Join</a>
             </li>
           ))}
         </ul>
